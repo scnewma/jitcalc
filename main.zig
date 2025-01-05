@@ -1,6 +1,7 @@
 const std = @import("std");
 
 const SIZE: usize = 8192;
+const NLOOPS: usize = 10_000_000;
 
 pub fn main() !void {
     const stdout = std.io.getStdOut().writer();
@@ -20,8 +21,13 @@ pub fn main() !void {
         }
         jit.compile(token);
     }
-    const result = jit.execute(1);
-    try stdout.print("{}\n", .{result});
+    jit.emit_instructions(&.{0xc3}); // ret
+
+    var result: isize = 0;
+    for (0..NLOOPS) |_| {
+        result = jit.execute(1);
+    }
+    try stdout.print("{} N={}\n", .{ result, NLOOPS });
 }
 
 const BufferSize = 8 * 1024;
@@ -65,7 +71,6 @@ const JitCalc = struct {
     }
 
     pub fn execute(self: *@This(), initialValue: isize) isize {
-        self.emit_instructions(&.{0xc3}); // ret
         return @as(*const fn (isize) isize, @ptrCast(self.buffer))(initialValue);
     }
 };

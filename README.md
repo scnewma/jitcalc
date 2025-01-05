@@ -4,11 +4,19 @@ A basic calculator that is JIT-compiled. See https://ochagavia.nl/blog/the-jit-c
 
 ## Usage
 
+First compile either the C or the Zig version:
+
 ```
-# compile
+# compile (C)
 $ gcc -o jitcalc main.c -Wall -Werror
 
-# execute
+# compile (Zig)
+$ zig build-exe --name jitcalc main.zig
+```
+
+Then execute the program:
+
+```
 $ ./jitcalc '+ + - * /'
 2
 ```
